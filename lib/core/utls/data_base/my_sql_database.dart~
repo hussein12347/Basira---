@@ -1,0 +1,123 @@
+import 'package:path/path.dart';
+import 'package:sqflite/sqflite.dart' as sqlDatabase;
+
+import '../../../const/constant.dart';
+import 'crud.dart';
+
+
+class MySqlDataBase extends CRUD {
+  sqlDatabase.Database? _db;
+
+  Future<sqlDatabase.Database?> getDatabase() async {
+    if (_db == null || !_db!.isOpen) {
+      await _initDatabase();
+    }
+    return _db;
+  }
+
+  Future<void> _initDatabase() async {
+
+
+    String databasePath = await sqlDatabase.getDatabasesPath();
+    String databaseName = "quran.db";
+    String realDatabasePath = join(databasePath, databaseName);
+    int version = 1;
+
+    _db = await sqlDatabase.openDatabase(
+      realDatabasePath,
+      version: version,
+      onCreate: _onCreate,
+      onOpen: (db) async {
+        await db.execute('PRAGMA foreign_keys = ON;');
+      },
+    );
+  }
+
+  Future<void> _onCreate(sqlDatabase.Database db, int version) async {
+    /////////////////////////BookmarksTable/////////////////////////////////////
+    await db.execute('''
+  CREATE TABLE IF NOT EXISTS $kBookmarksTableName (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    $kSurahNumberColumn INTEGER NOT NULL,
+    $kVerseNumberColumn INTEGER NOT NULL,
+    $kNoteColumn TEXT, 
+    $kColorColumn INTEGER NOT NULL,
+    $kCreatedAtColumn TEXT NOT NULL
+  )
+''');
+
+  }
+
+  @override
+  Future<bool> delete({
+    required String tableName,
+    required int id,
+    required String ColumnIDName,
+  }) async {
+    final db = await getDatabase();
+    int deleted = await db!.delete(
+      tableName,
+      where: "$ColumnIDName = ?",
+      whereArgs: [id],
+    );
+    return deleted > 0;
+  }
+
+  @override
+  Future<bool> insert({
+    required String tableName,
+    required Map<String, dynamic> values,
+  }) async {
+    final db = await getDatabase();
+    int inserted = await db!.insert(tableName, values);
+    return inserted > 0;
+  }
+
+  Future<int> insertReturnedId({
+    required String tableName,
+    required Map<String, dynamic> values,
+  }) async {
+    final db = await getDatabase();
+    int inserted = await db!.insert(tableName, values);
+    return inserted;
+  }
+
+  @override
+  Future<List<Map<String, Object?>>> select({
+    required String tableName,
+    required String? where,
+  }) async {
+    final db = await getDatabase();
+    if (where == null) {
+      return await db!.query(tableName);
+    } else {
+      return await db!.query(tableName, where: where);
+    }
+  }
+
+  @override
+  Future<bool> update({
+    required String tableName,
+    required String ColumnIDName,
+    required int id,
+    required Map<String, dynamic> values,
+  }) async {
+    final db = await getDatabase();
+    int updated = await db!.update(
+      tableName,
+      values,
+      where: "$ColumnIDName = ?",
+      whereArgs: [id],
+    );
+    return updated > 0;
+  }
+
+  @override
+  Future<List<Map<String, Object?>>> selectUsingQuery({
+    required String query,
+    List<Object?>? arguments,
+  }) async {
+    final db = await getDatabase();
+    return await db!.rawQuery(query, arguments);
+  }
+}

@@ -1,0 +1,93 @@
+import '../../models/app_language_model.dart';
+
+const String kSupabaseUrl = 'https://pjgvlfrdgsgqdilhfzxx.supabase.co';
+const String kSupabaseApiKey =
+    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBqZ3ZsZnJkZ3NncWRpbGhmenh4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzA1MjEzNTgsImV4cCI6MjA4NjA5NzM1OH0.llamAyOiwoku0Aw_ghShRwrf0pYAFOdlYnMxAzIu-Nk";
+
+const String kNavBarRoute = '/';
+const kLanguagesRoute = '/languages';
+const kBranchRoute = '/branch';
+const kTopicRoute = '/topic';
+
+const kTextContentRoute = '/textContent';
+const kPdfContentRoute = '/pdfContent';
+const kSearchRedirectRoute = '/searchRedirect';
+const kYoutubeContentRoute = '/youtubeContent';
+const String kTranslateBaseUrl = "https://translation.googleapis.com/";
+const String kTranslateApiKey = "AIzaSyCT-pN9MVNqHvM_2v7WmMtM9zzszWmmC2Y";
+
+
+const List<AppLanguage> kSupportedLanguages = [
+  //  لغات الدعوة الأساسية
+  AppLanguage(code: 'ar', name: 'Arabic', nativeName: 'العربية', flag: '🇸🇦'),
+  AppLanguage(code: 'en', name: 'English', nativeName: 'English', flag: '🇺🇸'),
+  AppLanguage(code: 'es', name: 'Spanish', nativeName: 'Español', flag: '🇪🇸'),
+  AppLanguage(code: 'fr', name: 'French', nativeName: 'Français', flag: '🇫🇷'),
+  AppLanguage(code: 'pt', name: 'Portuguese', nativeName: 'Português', flag: '🇵🇹'),
+  AppLanguage(code: 'de', name: 'German', nativeName: 'Deutsch', flag: '🇩🇪'),
+  AppLanguage(code: 'tl', name: 'Filipino', nativeName: 'Tagalog', flag: '🇵🇭'),
+
+  //  لغات عالمية مهمة
+  AppLanguage(code: 'id', name: 'Indonesian', nativeName: 'Bahasa Indonesia', flag: '🇮🇩'),
+  AppLanguage(code: 'ur', name: 'Urdu', nativeName: 'اردو', flag: '🇵🇰'),
+  AppLanguage(code: 'hi', name: 'Hindi', nativeName: 'हिन्दी', flag: '🇮🇳'),
+  AppLanguage(code: 'bn', name: 'Bengali', nativeName: 'বাংলা', flag: '🇧🇩'),
+  AppLanguage(code: 'tr', name: 'Turkish', nativeName: 'Türkçe', flag: '🇹🇷'),
+  AppLanguage(code: 'fa', name: 'Persian', nativeName: 'فارسی', flag: '🇮🇷'),
+  AppLanguage(code: 'ru', name: 'Russian', nativeName: 'Русский', flag: '🇷🇺'),
+
+  //  لغات إسلامية محلية
+  AppLanguage(code: 'so', name: 'Somali', nativeName: 'Soomaali', flag: '🇸🇴'),
+  AppLanguage(code: 'ha', name: 'Hausa', nativeName: 'Hausa', flag: '🇳🇬'),
+  AppLanguage(code: 'am', name: 'Amharic', nativeName: 'አማርኛ', flag: '🇪🇹'),
+
+  //لغات مسلمة إضافية (مهمة جدًا للدعوة)
+  AppLanguage(code: 'ms', name: 'Malay', nativeName: 'Bahasa Melayu', flag: '🇲🇾'),
+  AppLanguage(code: 'sw', name: 'Swahili', nativeName: 'Kiswahili', flag: '🇹🇿'),
+  AppLanguage(code: 'uz', name: 'Uzbek', nativeName: 'Oʻzbekcha', flag: '🇺🇿'),
+  AppLanguage(code: 'kk', name: 'Kazakh', nativeName: 'Қазақша', flag: '🇰🇿'),
+  AppLanguage(code: 'ky', name: 'Kyrgyz', nativeName: 'Кыргызча', flag: '🇰🇬'),
+  AppLanguage(code: 'tg', name: 'Tajik', nativeName: 'Тоҷикӣ', flag: '🇹🇯'),
+
+
+  // لغات أوروبية إضافية
+
+  AppLanguage(code: 'it', name: 'Italian', nativeName: 'Italiano', flag: '🇮🇹'),
+  AppLanguage(code: 'nl', name: 'Dutch', nativeName: 'Nederlands', flag: '🇳🇱'),
+  AppLanguage(code: 'sv', name: 'Swedish', nativeName: 'Svenska', flag: '🇸🇪'),
+  AppLanguage(code: 'no', name: 'Norwegian', nativeName: 'Norsk', flag: '🇳🇴'),
+  AppLanguage(code: 'da', name: 'Danish', nativeName: 'Dansk', flag: '🇩🇰'),
+  AppLanguage(code: 'fi', name: 'Finnish', nativeName: 'Suomi', flag: '🇫🇮'),
+  AppLanguage(code: 'pl', name: 'Polish', nativeName: 'Polski', flag: '🇵🇱'),
+  AppLanguage(code: 'cs', name: 'Czech', nativeName: 'Čeština', flag: '🇨🇿'),
+  AppLanguage(code: 'sk', name: 'Slovak', nativeName: 'Slovenčina', flag: '🇸🇰'),
+  AppLanguage(code: 'hu', name: 'Hungarian', nativeName: 'Magyar', flag: '🇭🇺'),
+  AppLanguage(code: 'ro', name: 'Romanian', nativeName: 'Română', flag: '🇷🇴'),
+  AppLanguage(code: 'el', name: 'Greek', nativeName: 'Ελληνικά', flag: '🇬🇷'),
+
+
+  //لغات آسيا الشرقية
+
+  AppLanguage(code: 'zh', name: 'Chinese', nativeName: '中文', flag: '🇨🇳'),
+  AppLanguage(code: 'zh-TW', name: 'Chinese (Traditional)', nativeName: '繁體中文', flag: '🇹🇼'),
+  AppLanguage(code: 'ja', name: 'Japanese', nativeName: '日本語', flag: '🇯🇵'),
+  AppLanguage(code: 'ko', name: 'Korean', nativeName: '한국어', flag: '🇰🇷'),
+
+  //غات إفريقية إضافية
+
+
+  AppLanguage(code: 'yo', name: 'Yoruba', nativeName: 'Yorùbá', flag: '🇳🇬'),
+  AppLanguage(code: 'ig', name: 'Igbo', nativeName: 'Asụsụ Igbo', flag: '🇳🇬'),
+  AppLanguage(code: 'zu', name: 'Zulu', nativeName: 'isiZulu', flag: '🇿🇦'),
+  AppLanguage(code: 'xh', name: 'Xhosa', nativeName: 'isiXhosa', flag: '🇿🇦'),
+
+
+  //لغات الأمريكتين
+
+  AppLanguage(code: 'th', name: 'Thai', nativeName: 'ไทย', flag: '🇹🇭'),
+  AppLanguage(code: 'vi', name: 'Vietnamese', nativeName: 'Tiếng Việt', flag: '🇻🇳'),
+  AppLanguage(code: 'my', name: 'Burmese', nativeName: 'မြန်မာ', flag: '🇲🇲'),
+  AppLanguage(code: 'ne', name: 'Nepali', nativeName: 'नेपाली', flag: '🇳🇵'),
+
+
+];

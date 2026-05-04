@@ -1,0 +1,140 @@
+import 'package:elda3ia_tour/core/utls/data_base/my_sql_database.dart';
+import 'package:elda3ia_tour/features/quran/data/repos/quran_repo.dart';
+
+import '../../../../const/constant.dart';
+import '../data/ar_tafsir_data.dart';
+import '../data/en_tafsir_data.dart';
+import '../data/translate.dart';
+import '../models/book_mark_model.dart';
+
+class QuranRepoImpl implements QuranRepo {
+  MySqlDataBase _sql= MySqlDataBase();
+  @override
+  String getTafsirText(int surah, int verse) {
+    try {
+      // البحث في القائمة عن العنصر المطابق
+      // لاحظ أننا حولنا الأرقام إلى String لأنها في القائمة التي أرفقتها عبارة عن نصوص
+      final result = tafsir.firstWhere(
+            (element) => element['number'] == surah.toString() && element['aya'] == verse.toString(),
+        orElse: () => {'text': 'التفسير غير متوفر حالياً.'},
+      );
+      return result['text']!;
+    } catch (e) {
+      return 'حدث خطأ أثناء تحميل التفسير.';
+    }
+  }
+  @override
+  String getEnTafsir({
+    required int surahNumber,
+    required int ayahNumber,
+  }) {
+    try {
+      return enTafsir[surahNumber - 1][ayahNumber - 1];
+    } catch (e) {
+      return "Tafsir not found";
+    }
+  }
+  @override
+  String getEnTranslation({
+    required int surahNumber,
+    required int ayahNumber,
+  }) {
+    try {
+      final surah = translateQuran[surahNumber.toString()];
+      return surah[ayahNumber - 1]["text"];
+    } catch (e) {
+      return "Translation not found";
+    }
+  }
+
+  @override
+  Future<bool> addBookmark(BookMarkModel bookmark) async {
+    try {
+      return await _sql.insert(
+        tableName: kBookmarksTableName,
+        values: bookmark.toMap(),
+      );
+    } catch (e) {
+      print("Error adding bookmark: $e");
+      return false;
+    }
+  }
+
+  @override
+  Future<bool> deleteBookmark(int id) async {
+    try {
+      return await _sql.delete(
+        tableName: kBookmarksTableName,
+        id: id,
+        ColumnIDName: 'id',
+      );
+    } catch (e) {
+      print("Error deleting bookmark: $e");
+      return false;
+    }
+  }
+
+  @override
+  Future<List<BookMarkModel>> getAllBookmarks() async {
+    try {
+      final List<Map<String, dynamic>> result = await _sql.selectUsingQuery(
+        query: 'SELECT * FROM $kBookmarksTableName ORDER BY $kCreatedAtColumn DESC',
+      );
+
+      return result.map((map) => BookMarkModel.fromMap(map)).toList();
+    } catch (e) {
+      print("Error fetching bookmarks: $e");
+      return [];
+    }
+  }
+  // أضف هذه الدالة داخل QuranRepoImpl
+  @override
+  Future<List<Map<String, dynamic>>> searchInTranslationAndTafsir(String query) async {
+    List<Map<String, dynamic>> results = [];
+    String lowerQuery = query.toLowerCase();
+
+    if (lowerQuery.trim().isEmpty) return results;
+
+    // 1. البحث في الترجمة الإنجليزية
+    try {
+      translateQuran.forEach((surahKey, ayahs) {
+        int surahNum = int.tryParse(surahKey) ?? 0;
+        // ayahs عبارة عن List من الـ Maps بناءً على هيكل ملف الترجمة لديك
+        for (int i = 0; i < ayahs.length; i++) {
+          String text = ayahs[i]['text'] ?? '';
+          if (text.toLowerCase().contains(lowerQuery)) {
+            results.add({
+              'sora': surahNum,
+              'aya_no': i + 1,
+              'type': 'translation', // 💡 تحديد نوع النتيجة
+              'text': text,
+            });
+          }
+        }
+      });
+    } catch (e) {
+      print("Error searching translation: $e");
+    }
+
+    // // 2. البحث في التفسير الإنجليزي
+    // try {
+    //   for (int i = 0; i < enTafsir.length; i++) {
+    //     for (int j = 0; j < enTafsir[i].length; j++) {
+    //       String text = enTafsir[i][j];
+    //       if (text.toLowerCase().contains(lowerQuery)) {
+    //         results.add({
+    //           'sora': i + 1,
+    //           'aya_no': j + 1,
+    //           'type': 'tafsir', // 💡 تحديد نوع النتيجة
+    //           'text': text,
+    //         });
+    //       }
+    //     }
+    //   }
+    // } catch (e) {
+    //   print("Error searching tafsir: $e");
+    // }
+
+    return results;
+  }
+}

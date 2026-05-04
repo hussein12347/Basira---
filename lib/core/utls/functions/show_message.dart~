@@ -1,0 +1,70 @@
+import 'package:flutter/material.dart';
+import 'package:toastification/toastification.dart';
+
+class SnackbarHelper {
+  /// Core private method to keep styling consistent
+  static void _show({
+    required String title,
+    required String message,
+    required ToastificationType type,
+    ToastificationStyle style = ToastificationStyle.flatColored,
+    IconData? icon,
+    Duration? duration,
+  }) {
+    toastification.show(
+      type: type,
+      style: style,
+      title: Text(title, style: const TextStyle(fontWeight: FontWeight.bold)),
+      description: Text(message),
+      alignment: Alignment.topRight,
+      autoCloseDuration: duration ?? const Duration(seconds: 4),
+      animationDuration: const Duration(milliseconds: 300),
+      icon: icon != null ? Icon(icon) : null,
+      showProgressBar: true,
+      dragToClose: true,
+      pauseOnHover: true,
+      applyBlurEffect: true,
+    );
+  }
+
+  static void showSuccess(String message, {String title = 'Success'}) {
+    _show(
+      title: title,
+      message: message,
+      type: ToastificationType.success,
+      icon: Icons.check_circle_outline,
+    );
+  }
+
+  static void showError(String message, {String title = 'Error'}) {
+    _show(
+      title: title,
+      message: message,
+      type: ToastificationType.error,
+      icon: Icons.error_outline,
+    );
+  }
+
+  static void showInfo(String message, {String title = 'Info'}) {
+    _show(
+      title: title,
+      message: message,
+      type: ToastificationType.info,
+      icon: Icons.info_outline,
+    );
+  }
+
+  static void showWarning(String message, {String title = 'Warning'}) {
+    _show(
+      title: title,
+      message: message,
+      type: ToastificationType.warning,
+      icon: Icons.warning_amber_rounded,
+    );
+  }
+
+  /// Clears all active toasts immediately
+  static void clearAll() {
+    toastification.dismissAll();
+  }
+}

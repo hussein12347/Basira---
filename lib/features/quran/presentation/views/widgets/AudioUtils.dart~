@@ -1,0 +1,656 @@
+
+import 'package:elda3ia_tour/features/quran/data/models/audio_model.dart';
+
+class AudioUtils {
+  static String getAudioFileCode(int surahNumber, int verseNumber) {
+    final surahStr = surahNumber.toString().padLeft(3, '0');
+    final verseStr = verseNumber.toString().padLeft(3, '0');
+    return '$surahStr$verseStr';
+  }
+
+  static String? getAudioUrl(AudioModel reciterModel, int surah, int verse) {
+    final fileCode = getAudioFileCode(surah, verse);
+    if (reciterModel.audioUrlBitRate128!=null&&reciterModel.audioUrlBitRate128!.isNotEmpty) {
+      return '${reciterModel.audioUrlBitRate128}$fileCode.mp3';
+    } else if (reciterModel.audioUrlBitRate64!=null&&reciterModel.audioUrlBitRate64!.isNotEmpty) {
+      return '${reciterModel.audioUrlBitRate64}$fileCode.mp3';
+    } else if (reciterModel.audioUrlBitRate32!=null&&reciterModel.audioUrlBitRate32!.isNotEmpty) {
+      return '${reciterModel.audioUrlBitRate32}$fileCode.mp3';
+    }
+    return null;
+  }
+
+  static List<Map<String, dynamic>> audios = [
+    {
+      "id": "0",
+      "name_ar": "إبراهيم الأخضر",
+      "name_en": "Ibrahim Al-Akhdar",
+      "rewaya_ar": "حفص عن عاصم",
+      "rewaya_en": "Hafs from Asim",
+      "musshaf_type_ar": "مرتل",
+      "musshaf_type_en": "Murattal",
+      "audio_url_bit_rate_32":
+      "https://verse.mp3quran.net/arabic/ibrahim_alakhdar/32/",
+      "audio_url_bit_rate_64": "",
+      "audio_url_bit_rate_128": "",
+    },
+    {
+      "id": "1",
+      "name_ar": "شيخ أبو بكر الشاطري",
+      "name_en": "Sheikh Abu Bakr Al-Shatri",
+      "rewaya_ar": "حفص عن عاصم",
+      "rewaya_en": "Hafs from Asim",
+      "musshaf_type_ar": "مرتل",
+      "musshaf_type_en": "Murattal",
+      "audio_url_bit_rate_32": "",
+      "audio_url_bit_rate_64":
+      "https://verse.mp3quran.net/arabic/shaik_abu_baker_alshatri/64/",
+      "audio_url_bit_rate_128":
+      "https://verse.mp3quran.net/arabic/shaik_abu_baker_alshatri/128/",
+    },
+    {
+      "id": "2",
+      "name_ar": "أحمد بن علي العجمي",
+      "name_en": "Ahmed bin Ali Al-Ajmi",
+      "rewaya_ar": "حفص عن عاصم",
+      "rewaya_en": "Hafs from Asim",
+      "musshaf_type_ar": "مرتل",
+      "musshaf_type_en": "Murattal",
+      "audio_url_bit_rate_32": "",
+      "audio_url_bit_rate_64":
+      "https://verse.mp3quran.net/arabic/ahmed_alajmy/64/",
+      "audio_url_bit_rate_128":
+      "https://verse.mp3quran.net/arabic/ahmed_alajmy/128/",
+    },
+    {
+      "id": "3",
+      "name_ar": "أحمد نعينع",
+      "name_en": "Ahmed Naina",
+      "rewaya_ar": "حفص عن عاصم",
+      "rewaya_en": "Hafs from Asim",
+      "musshaf_type_ar": "مرتل",
+      "musshaf_type_en": "Murattal",
+      "audio_url_bit_rate_32": "",
+      "audio_url_bit_rate_64":
+      "https://verse.mp3quran.net/arabic/ahmed_neana/64/",
+      "audio_url_bit_rate_128":
+      "https://verse.mp3quran.net/arabic/ahmed_neana/128/",
+    },
+    {
+      "id": "4",
+      "name_ar": "أكرم العلاقمي",
+      "name_en": "Akram Al-Alaqmi",
+      "rewaya_ar": "حفص عن عاصم",
+      "rewaya_en": "Hafs from Asim",
+      "musshaf_type_ar": "مرتل",
+      "musshaf_type_en": "Murattal",
+      "audio_url_bit_rate_32": "",
+      "audio_url_bit_rate_64":
+      "https://verse.mp3quran.net/arabic/akram_alalaqmy/64/",
+      "audio_url_bit_rate_128":
+      "https://verse.mp3quran.net/arabic/akram_alalaqmy/128/",
+    },
+    {
+      "id": "5",
+      "name_ar": "خالد القحطاني",
+      "name_en": "Khalid Al-Qahtani",
+      "rewaya_ar": "حفص عن عاصم",
+      "rewaya_en": "Hafs from Asim",
+      "musshaf_type_ar": "مرتل",
+      "musshaf_type_en": "Murattal",
+      "audio_url_bit_rate_32": "",
+      "audio_url_bit_rate_64":
+      "https://verse.mp3quran.net/arabic/khalid_alqahtani/64/",
+      "audio_url_bit_rate_128":
+      "https://verse.mp3quran.net/arabic/khalid_alqahtani/128/",
+    },
+    {
+      "id": "6",
+      "name_ar": "خليفة الطنيجي",
+      "name_en": "Khalifa Al-Tunaiji",
+      "rewaya_ar": "حفص عن عاصم",
+      "rewaya_en": "Hafs from Asim",
+      "musshaf_type_ar": "مرتل",
+      "musshaf_type_en": "Murattal",
+      "audio_url_bit_rate_32": "",
+      "audio_url_bit_rate_64":
+      "https://verse.mp3quran.net/arabic/khalefa_altunaiji/64/",
+      "audio_url_bit_rate_128": "",
+    },
+    {
+      "id": "7",
+      "name_ar": "سعود الشريم",
+      "name_en": "Saud Al-Shuraim",
+      "rewaya_ar": "حفص عن عاصم",
+      "rewaya_en": "Hafs from Asim",
+      "musshaf_type_ar": "مرتل",
+      "musshaf_type_en": "Murattal",
+      "audio_url_bit_rate_32": "",
+      "audio_url_bit_rate_64":
+      "https://verse.mp3quran.net/arabic/saud_alshuraim/64/",
+      "audio_url_bit_rate_128":
+      "https://verse.mp3quran.net/arabic/saud_alshuraim/128/",
+    },
+    {
+      "id": "8",
+      "name_ar": "سهل ياسين",
+      "name_en": "Sahl Yassin",
+      "rewaya_ar": "حفص عن عاصم",
+      "rewaya_en": "Hafs from Asim",
+      "musshaf_type_ar": "مرتل",
+      "musshaf_type_en": "Murattal",
+      "audio_url_bit_rate_32": "",
+      "audio_url_bit_rate_64":
+      "https://verse.mp3quran.net/arabic/sahl_yassin/64/",
+      "audio_url_bit_rate_128":
+      "https://verse.mp3quran.net/arabic/sahl_yassin/128/",
+    },
+    {
+      "id": "9",
+      "name_ar": "صلاح البدير",
+      "name_en": "Salah Al-Budair",
+      "rewaya_ar": "حفص عن عاصم",
+      "rewaya_en": "Hafs from Asim",
+      "musshaf_type_ar": "مرتل",
+      "musshaf_type_en": "Murattal",
+      "audio_url_bit_rate_32": "",
+      "audio_url_bit_rate_64":
+      "https://verse.mp3quran.net/arabic/salah_albudair/64/",
+      "audio_url_bit_rate_128":
+      "https://verse.mp3quran.net/arabic/salah_albudair/128/",
+    },
+    {
+      "id": "10",
+      "name_ar": "صلاح بو خاطر",
+      "name_en": "Salah Bukhatir",
+      "rewaya_ar": "حفص عن عاصم",
+      "rewaya_en": "Hafs from Asim",
+      "musshaf_type_ar": "مرتل",
+      "musshaf_type_en": "Murattal",
+      "audio_url_bit_rate_32": "",
+      "audio_url_bit_rate_64":
+      "https://verse.mp3quran.net/arabic/salaah_bukhatir/64/",
+      "audio_url_bit_rate_128":
+      "https://verse.mp3quran.net/arabic/salaah_bukhatir/128/",
+    },
+    {
+      "id": "11",
+      "name_ar": "عبدالباسط عبدالصمد",
+      "name_en": "Abdul Basit Abdul Samad",
+      "rewaya_ar": "حفص عن عاصم",
+      "rewaya_en": "Hafs from Asim",
+      "musshaf_type_ar": "مرتل",
+      "musshaf_type_en": "Murattal",
+      "audio_url_bit_rate_32": "",
+      "audio_url_bit_rate_64":
+      "https://everyayah.com/data/Abdul_Basit_Murattal_64kbps/",
+      "audio_url_bit_rate_128":
+      "https://everyayah.com/data/Abdul_Basit_Murattal_192kbps/",
+    },
+    {
+      "id": "12",
+      "name_ar": "عبدالباسط عبدالصمد",
+      "name_en": "Abdul Basit Abdul Samad",
+      "rewaya_ar": "حفص عن عاصم",
+      "rewaya_en": "Hafs from Asim",
+      "musshaf_type_ar": "المصحف المجود",
+      "musshaf_type_en": "Mujawwad",
+      "audio_url_bit_rate_32": "",
+      "audio_url_bit_rate_64":
+      "https://verse.mp3quran.net/arabic/abdulbasit_abdulsamad_mujawwad/64/",
+      "audio_url_bit_rate_128":
+      "https://verse.mp3quran.net/arabic/abdulbasit_abdulsamad_mujawwad/128/",
+    },
+    {
+      "id": "13",
+      "name_ar": "عبدالرحمن السديس",
+      "name_en": "Abdurrahman Al-Sudais",
+      "rewaya_ar": "حفص عن عاصم",
+      "rewaya_en": "Hafs from Asim",
+      "musshaf_type_ar": "مرتل",
+      "musshaf_type_en": "Murattal",
+      "audio_url_bit_rate_32": "",
+      "audio_url_bit_rate_64":
+      "https://verse.mp3quran.net/arabic/abdurrahmaan_alsudais/64/",
+      "audio_url_bit_rate_128":
+      "https://verse.mp3quran.net/arabic/abdurrahmaan_alsudais/128/",
+    },
+    {
+      "id": "14",
+      "name_ar": "عبدالله المطرود",
+      "name_en": "Abdullah Al-Matroud",
+      "rewaya_ar": "حفص عن عاصم",
+      "rewaya_en": "Hafs from Asim",
+      "musshaf_type_ar": "مرتل",
+      "musshaf_type_en": "Murattal",
+      "audio_url_bit_rate_32": "",
+      "audio_url_bit_rate_64":
+      "https://verse.mp3quran.net/arabic/abdullah_almatroud/64/",
+      "audio_url_bit_rate_128":
+      "https://verse.mp3quran.net/arabic/abdullah_almatroud/128/",
+    },
+    {
+      "id": "15",
+      "name_ar": "عبدالله بصفر",
+      "name_en": "Abdullah Basfar",
+      "rewaya_ar": "حفص عن عاصم",
+      "rewaya_en": "Hafs from Asim",
+      "musshaf_type_ar": "مرتل",
+      "musshaf_type_en": "Murattal",
+      "audio_url_bit_rate_32": "",
+      "audio_url_bit_rate_64":
+      "https://verse.mp3quran.net/arabic/abdullah_basfar/64/",
+      "audio_url_bit_rate_128":
+      "https://verse.mp3quran.net/arabic/abdullah_basfar/128/",
+    },
+    {
+      "id": "16",
+      "name_ar": "عبدالله عواد الجهني",
+      "name_en": "Abdullah Awad Al-Juhani",
+      "rewaya_ar": "حفص عن عاصم",
+      "rewaya_en": "Hafs from Asim",
+      "musshaf_type_ar": "مرتل",
+      "musshaf_type_en": "Murattal",
+      "audio_url_bit_rate_32": "",
+      "audio_url_bit_rate_64":
+      "https://verse.mp3quran.net/arabic/abdullaah_aljohani/64/",
+      "audio_url_bit_rate_128":
+      "https://verse.mp3quran.net/arabic/abdullaah_aljohani/128/",
+    },
+    {
+      "id": "17",
+      "name_ar": "عبدالمحسن القاسم",
+      "name_en": "Abdul Mohsin Al-Qasim",
+      "rewaya_ar": "حفص عن عاصم",
+      "rewaya_en": "Hafs from Asim",
+      "musshaf_type_ar": "مرتل",
+      "musshaf_type_en": "Murattal",
+      "audio_url_bit_rate_32": "",
+      "audio_url_bit_rate_64":
+      "https://verse.mp3quran.net/arabic/abdulmohsin_alqasim/64/",
+      "audio_url_bit_rate_128":
+      "https://verse.mp3quran.net/arabic/abdulmohsin_alqasim/128/",
+    },
+    {
+      "id": "18",
+      "name_ar": "علي الحذيفي",
+      "name_en": "Ali Al-Hudhaifi",
+      "rewaya_ar": "حفص عن عاصم",
+      "rewaya_en": "Hafs from Asim",
+      "musshaf_type_ar": "مرتل",
+      "musshaf_type_en": "Murattal",
+      "audio_url_bit_rate_32": "",
+      "audio_url_bit_rate_64":
+      "https://verse.mp3quran.net/arabic/ali_alhuthaify/64/",
+      "audio_url_bit_rate_128":
+      "https://verse.mp3quran.net/arabic/ali_alhuthaify/128/",
+    },
+    {
+      "id": "19",
+      "name_ar": "علي جابر",
+      "name_en": "Ali Jaber",
+      "rewaya_ar": "حفص عن عاصم",
+      "rewaya_en": "Hafs from Asim",
+      "musshaf_type_ar": "مرتل",
+      "musshaf_type_en": "Murattal",
+      "audio_url_bit_rate_32": "",
+      "audio_url_bit_rate_64": "https://verse.mp3quran.net/arabic/ali_jaber/64/",
+      "audio_url_bit_rate_128": "",
+    },
+    {
+      "id": "20",
+      "name_ar": "علي حجاج السويسي",
+      "name_en": "Ali Hajjaj Al-Suwaisi",
+      "rewaya_ar": "حفص عن عاصم",
+      "rewaya_en": "Hafs from Asim",
+      "musshaf_type_ar": "مرتل",
+      "musshaf_type_en": "Murattal",
+      "audio_url_bit_rate_32": "",
+      "audio_url_bit_rate_64": "https://verse.mp3quran.net/arabic/ali_hajjaj/64/",
+      "audio_url_bit_rate_128":
+      "https://verse.mp3quran.net/arabic/ali_hajjaj/128/",
+    },
+    {
+      "id": "21",
+      "name_ar": "فارس عباد",
+      "name_en": "Fares Abbad",
+      "rewaya_ar": "حفص عن عاصم",
+      "rewaya_en": "Hafs from Asim",
+      "musshaf_type_ar": "مرتل",
+      "musshaf_type_en": "Murattal",
+      "audio_url_bit_rate_32": "",
+      "audio_url_bit_rate_64":
+      "https://verse.mp3quran.net/arabic/fares_abbad/64/",
+      "audio_url_bit_rate_128": "",
+    },
+    {
+      "id": "22",
+      "name_ar": "ناصر القطامي",
+      "name_en": "Nasser Al-Qatami",
+      "rewaya_ar": "حفص عن عاصم",
+      "rewaya_en": "Hafs from Asim",
+      "musshaf_type_ar": "مرتل",
+      "musshaf_type_en": "Murattal",
+      "audio_url_bit_rate_32": "",
+      "audio_url_bit_rate_64":
+      "https://verse.mp3quran.net/arabic/nasser_alqatami/64/",
+      "audio_url_bit_rate_128":
+      "https://verse.mp3quran.net/arabic/nasser_alqatami/128/",
+    },
+    {
+      "id": "23",
+      "name_ar": "هاني الرفاعي",
+      "name_en": "Hani Al-Rifai",
+      "rewaya_ar": "حفص عن عاصم",
+      "rewaya_en": "Hafs from Asim",
+      "musshaf_type_ar": "مرتل",
+      "musshaf_type_en": "Murattal",
+      "audio_url_bit_rate_32": "",
+      "audio_url_bit_rate_64":
+      "https://verse.mp3quran.net/arabic/hani_alrifai/64/",
+      "audio_url_bit_rate_128":
+      "https://verse.mp3quran.net/arabic/hani_alrifai/128/",
+    },
+    {
+      "id": "24",
+      "name_ar": "ياسر الدوسري",
+      "name_en": "Yasser Al-Dosari",
+      "rewaya_ar": "حفص عن عاصم",
+      "rewaya_en": "Hafs from Asim",
+      "musshaf_type_ar": "مرتل",
+      "musshaf_type_en": "Murattal",
+      "audio_url_bit_rate_32": "",
+      "audio_url_bit_rate_64":
+      "https://verse.mp3quran.net/arabic/yasser_aldossary/64/",
+      "audio_url_bit_rate_128":
+      "https://verse.mp3quran.net/arabic/yasser_aldossary/128/",
+    },
+    {
+      "id": "25",
+      "name_ar": "ماهر المعيقلي",
+      "name_en": "Maher Al-Muaiqly",
+      "rewaya_ar": "حفص عن عاصم",
+      "rewaya_en": "Hafs from Asim",
+      "musshaf_type_ar": "مرتل",
+      "musshaf_type_en": "Murattal",
+      "audio_url_bit_rate_32": "",
+      "audio_url_bit_rate_64":
+      "https://verse.mp3quran.net/arabic/maher_almuaiqly/64/",
+      "audio_url_bit_rate_128":
+      "https://verse.mp3quran.net/arabic/maher_almuaiqly/128/",
+    },
+    {
+      "id": "26",
+      "name_ar": "محمد الطبلاوي",
+      "name_en": "Mohammad Al-Tablawi",
+      "rewaya_ar": "حفص عن عاصم",
+      "rewaya_en": "Hafs from Asim",
+      "musshaf_type_ar": "مرتل",
+      "musshaf_type_en": "Murattal",
+      "audio_url_bit_rate_32": "",
+      "audio_url_bit_rate_64":
+      "https://verse.mp3quran.net/arabic/mohammad_altablaway/64/",
+      "audio_url_bit_rate_128":
+      "https://verse.mp3quran.net/arabic/mohammad_altablaway/128/",
+    },
+    {
+      "id": "27",
+      "name_ar": "محمد أيوب",
+      "name_en": "Mohammad Ayyub",
+      "rewaya_ar": "حفص عن عاصم",
+      "rewaya_en": "Hafs from Asim",
+      "musshaf_type_ar": "مرتل",
+      "musshaf_type_en": "Murattal",
+      "audio_url_bit_rate_32": "",
+      "audio_url_bit_rate_64":
+      "https://verse.mp3quran.net/arabic/mohammad_ayyoub/64/",
+      "audio_url_bit_rate_128":
+      "https://verse.mp3quran.net/arabic/mohammad_ayyoub/128/",
+    },
+    {
+      "id": "28",
+      "name_ar": "محمد جبريل",
+      "name_en": "Mohammad Jibreel",
+      "rewaya_ar": "حفص عن عاصم",
+      "rewaya_en": "Hafs from Asim",
+      "musshaf_type_ar": "مرتل",
+      "musshaf_type_en": "Murattal",
+      "audio_url_bit_rate_32": "",
+      "audio_url_bit_rate_64":
+      "https://verse.mp3quran.net/arabic/mohammad_jibreel/64/",
+      "audio_url_bit_rate_128":
+      "https://verse.mp3quran.net/arabic/mohammad_jibreel/128/",
+    },
+    {
+      "id": "29",
+      "name_ar": "محمد صديق المنشاوي",
+      "name_en": "Mohammad Siddiq Al-Minshawi",
+      "rewaya_ar": "حفص عن عاصم",
+      "rewaya_en": "Hafs from Asim",
+      "musshaf_type_ar": "مرتل",
+      "musshaf_type_en": "Murattal",
+      "audio_url_bit_rate_32": "",
+      "audio_url_bit_rate_64":
+      "https://verse.mp3quran.net/arabic/mohammad_alminshawi/64/",
+      "audio_url_bit_rate_128":
+      "https://verse.mp3quran.net/arabic/mohammad_alminshawi/128/",
+    },
+    {
+      "id": "30",
+      "name_ar": "محمد صديق المنشاوي",
+      "name_en": "Mohammad Siddiq Al-Minshawi",
+      "rewaya_ar": "حفص عن عاصم",
+      "rewaya_en": "Hafs from Asim",
+      "musshaf_type_ar": "المصحف المجود",
+      "musshaf_type_en": "Mujawwad",
+      "audio_url_bit_rate_32": "",
+      "audio_url_bit_rate_64":
+      "https://verse.mp3quran.net/arabic/mohammad_alminshawi_mujawwd/64/",
+      "audio_url_bit_rate_128":
+      "https://verse.mp3quran.net/arabic/mohammad_alminshawi_mujawwd/128/",
+    },
+    {
+      "id": "31",
+      "name_ar": "محمد عبدالكريم",
+      "name_en": "Mohammad Abdul Karim",
+      "rewaya_ar": "حفص عن عاصم",
+      "rewaya_en": "Hafs from Asim",
+      "musshaf_type_ar": "مرتل",
+      "musshaf_type_en": "Murattal",
+      "audio_url_bit_rate_32": "",
+      "audio_url_bit_rate_64":
+      "https://verse.mp3quran.net/arabic/mohammad_abdulkarim/64/",
+      "audio_url_bit_rate_128": "",
+    },
+    {
+      "id": "32",
+      "name_ar": "محمود خليل الحصري",
+      "name_en": "Mahmoud Khalil Al-Husary",
+      "rewaya_ar": "حفص عن عاصم",
+      "rewaya_en": "Hafs from Asim",
+      "musshaf_type_ar": "مرتل",
+      "musshaf_type_en": "Murattal",
+      "audio_url_bit_rate_32": "",
+      "audio_url_bit_rate_64":
+      "https://verse.mp3quran.net/arabic/mahmood_alhusary/64/",
+      "audio_url_bit_rate_128":
+      "https://verse.mp3quran.net/arabic/mahmood_alhusary/128/",
+    },
+    {
+      "id": "33",
+      "name_ar": "محمود خليل الحصري",
+      "name_en": "Mahmoud Khalil Al-Husary",
+      "rewaya_ar": "حفص عن عاصم",
+      "rewaya_en": "Hafs from Asim",
+      "musshaf_type_ar": "المصحف المجود",
+      "musshaf_type_en": "Mujawwad",
+      "audio_url_bit_rate_32": "",
+      "audio_url_bit_rate_64":
+      "https://verse.mp3quran.net/arabic/mahmood_alhusary_mujawwd/64/",
+      "audio_url_bit_rate_128":
+      "https://verse.mp3quran.net/arabic/mahmood_alhusary_mujawwd/128/",
+    },
+    {
+      "id": "34",
+      "name_ar": "محمود علي البنا",
+      "name_en": "Mahmoud Ali Al-Banna",
+      "rewaya_ar": "حفص عن عاصم",
+      "rewaya_en": "Hafs from Asim",
+      "musshaf_type_ar": "مرتل",
+      "musshaf_type_en": "Murattal",
+      "audio_url_bit_rate_32":
+      "https://verse.mp3quran.net/arabic/mahmoud_ali_albanna/32/",
+      "audio_url_bit_rate_64": "",
+      "audio_url_bit_rate_128": "",
+    },
+    {
+      "id": "35",
+      "name_ar": "مشاري العفاسي",
+      "name_en": "Mishary Al-Afasy",
+      "rewaya_ar": "حفص عن عاصم",
+      "rewaya_en": "Hafs from Asim",
+      "musshaf_type_ar": "مرتل",
+      "musshaf_type_en": "Murattal",
+      "audio_url_bit_rate_32": "",
+      "audio_url_bit_rate_64":
+      "https://verse.mp3quran.net/arabic/mishary_alafasy/64/",
+      "audio_url_bit_rate_128":
+      "https://verse.mp3quran.net/arabic/mishary_alafasy/128/",
+    },
+    {
+      "id": "36",
+      "name_ar": "ياسر سلامة",
+      "name_en": "Yasser Salama",
+      "rewaya_ar": "حفص عن عاصم",
+      "rewaya_en": "Hafs from Asim",
+      "musshaf_type_ar": "مرتل",
+      "musshaf_type_en": "Murattal",
+      "audio_url_bit_rate_32": "",
+      "audio_url_bit_rate_64":
+      "https://verse.mp3quran.net/arabic/yaser_salamah/64/",
+      "audio_url_bit_rate_128":
+      "https://verse.mp3quran.net/arabic/yaser_salamah/128/",
+    },
+    {
+      "id": "37",
+      "name_ar": "محمود خليل الحصري",
+      "name_en": "Mahmoud Khalil Al-Husary",
+      "rewaya_ar": "حفص عن عاصم",
+      "rewaya_en": "Hafs from Asim",
+      "musshaf_type_ar": "المصحف المعلم",
+      "musshaf_type_en": "Muallim",
+      "audio_url_bit_rate_32": "",
+      "audio_url_bit_rate_64":
+      "https://verse.mp3quran.net/arabic/mahmood_alhusary_muallim/64/",
+      "audio_url_bit_rate_128":
+      "https://verse.mp3quran.net/arabic/mahmood_alhusary_muallim/128/",
+    },
+
+    /////////////////////////////////////////////////////////////////
+
+    {
+      "id": "38",
+      "name_ar": "أيمن سويد",
+      "name_en": "Ayman Swed",
+      "rewaya_ar": "حفص عن عاصم",
+      "rewaya_en": "Hafs from Asim",
+      "musshaf_type_ar": "المصحف المعلم",
+      "musshaf_type_en": "Muallim",
+      "audio_url_bit_rate_32": "",
+      "audio_url_bit_rate_64":
+      "https://everyayah.com/data/Ayman_Sowaid_64kbps/",
+      "audio_url_bit_rate_128":
+      "",
+    },
+
+
+    {
+      "id": "39",
+      "name_ar": "سعد الغامدي",
+      "name_en": "Saad Al Ghamdi",
+      "rewaya_ar": "حفص عن عاصم",
+      "rewaya_en": "Hafs from Asim",
+      "musshaf_type_ar": "مرتل",
+      "musshaf_type_en": "Murattal",
+      "audio_url_bit_rate_32": "https://everyayah.com/data/Ghamadi_40kbps/",
+      "audio_url_bit_rate_64":
+      "",
+      "audio_url_bit_rate_128":
+      "",
+    },
+    {
+      "id": "40",
+      "name_ar": "كريم منصوري",
+      "name_en": "Karim Mansoori",
+      "rewaya_ar": "حفص عن عاصم",
+      "rewaya_en": "Hafs from Asim",
+      "musshaf_type_ar": "المصحف المجود",
+      "musshaf_type_en": "Mujawwad",
+      "audio_url_bit_rate_32": "https://everyayah.com/data/Karim_Mansoori_40kbps/",
+      "audio_url_bit_rate_64":
+      "",
+      "audio_url_bit_rate_128":
+      "",
+    },
+
+
+    {
+      "id": "41",
+      "name_ar": "محمد صديق المنشاوي",
+      "name_en": "Mohammad Siddiq Al-Minshawi",
+      "rewaya_ar": "حفص عن عاصم",
+      "rewaya_en": "Hafs from Asim",
+      "musshaf_type_ar": "المصحف المعلم",
+      "musshaf_type_en": "Muallim",
+      "audio_url_bit_rate_32": "",
+      "audio_url_bit_rate_64":
+      "",
+      "audio_url_bit_rate_128":
+      "https://everyayah.com/data/Minshawy_Teacher_128kbps/",
+    },
+
+    {
+      "id": "42",
+      "name_ar": "عبدالله بصفر مترجم",
+      "name_en": "Abdullah Basfar Translated",
+      "rewaya_ar": "حفص عن عاصم",
+      "rewaya_en": "Hafs from Asim",
+      "musshaf_type_ar": "المصحف المترجم",
+      "musshaf_type_en": "English",
+      "audio_url_bit_rate_32": "",
+      "audio_url_bit_rate_64":
+      "",
+      "audio_url_bit_rate_128":
+      "https://everyayah.com/data/MultiLanguage/Basfar_Walk_192kbps/",
+    },
+    {
+      "id": "43",
+      "name_ar": "مصطفى إسماعيل",
+      "name_en": "Mustafa Ismail",
+      "rewaya_ar": "حفص عن عاصم",
+      "rewaya_en": "Hafs from Asim",
+      "musshaf_type_ar": "مرتل",
+      "musshaf_type_en": "Murattal",
+      "audio_url_bit_rate_32": "https://everyayah.com/data/Mustafa_Ismail_48kbps/",
+      "audio_url_bit_rate_64":
+      "",
+      "audio_url_bit_rate_128":
+      "",
+    },
+    {
+      "id": "44",
+      "name_ar": "نبيل الرفاعي",
+      "name_en": "Nabil Ar Rifai",
+      "rewaya_ar": "حفص عن عاصم",
+      "rewaya_en": "Hafs from Asim",
+      "musshaf_type_ar": "مرتل",
+      "musshaf_type_en": "Murattal",
+      "audio_url_bit_rate_32": "https://everyayah.com/data/Nabil_Rifa3i_48kbps/",
+      "audio_url_bit_rate_64":
+      "",
+      "audio_url_bit_rate_128":
+      "",
+    },
+  ];
+
+}

@@ -1,0 +1,108 @@
+
+import 'dart:async';
+import 'package:bloc/bloc.dart';
+import 'package:just_audio/just_audio.dart';
+import 'package:just_audio_background/just_audio_background.dart';
+import 'audio_state.dart';
+
+class AudioCubit extends Cubit<AudioState> {
+  final AudioPlayer player;
+
+  StreamSubscription? _playerStateSubscription;
+  StreamSubscription? _durationSubscription;
+  StreamSubscription? _positionSubscription;
+  StreamSubscription? _sequenceStateSubscription;
+
+  AudioCubit(this.player) : super(AudioState.initial()) {
+    player.setLoopMode(LoopMode.off);
+    _listenToPlayer();
+  }
+
+  void _listenToPlayer() {
+    _playerStateSubscription = player.playerStateStream.listen((playerState) {
+      emit(state.copyWith(
+        processingState: playerState.processingState,
+        isPlaying: playerState.playing,
+      ));
+    });
+    _durationSubscription = player.durationStream.listen((d) {
+      emit(state.copyWith(duration: d ?? Duration.zero));
+    });
+    _positionSubscription = player.positionStream.listen((p) {
+      emit(state.copyWith(position: p));
+    });
+    _sequenceStateSubscription = player.sequenceStateStream.listen((sequenceState) {
+      final index = sequenceState.currentIndex ?? 0;
+      final mediaItem = sequenceState.currentSource?.tag as MediaItem?;
+      emit(state.copyWith(
+        currentIndex: index,
+        currentMediaItem: mediaItem,
+      ));
+    });
+  }
+
+
+  Future<void> setAndPlayPlaylist(
+      ConcatenatingAudioSource playlist, {
+        int initialIndex = 0,
+      }) async {
+    try {
+      await player.setAudioSource(
+        playlist,
+        initialIndex: initialIndex,
+        initialPosition: Duration.zero,
+      );
+      await player.play();
+    } catch (e) {
+      print("Error setting playlist: $e");
+      emit(AudioState.initial());
+    }
+  }
+
+
+  Future<void> playAudio(AudioSource source) async {
+    try {
+      await player.setAudioSource(source);
+      await player.play();
+    } catch (e) {
+      print("Error playing audio source: $e");
+      emit(AudioState.initial());
+    }
+  }
+
+  Future<void> pause() async {
+    await player.pause();
+  }
+
+  Future<void> resume() async {
+    await player.play();
+  }
+
+  Future<void> stop() async {
+    await player.stop();
+  }
+
+
+  Future<void> seek(Duration position, {int? index}) async {
+    await player.seek(position, index: index);
+  }
+  // إضافة إلى AudioCubit
+  Future<void> seekToNext() async {
+    await player.seekToNext();
+  }
+
+  Future<void> seekToPrevious() async {
+    await player.seekToPrevious();
+  }
+
+
+  @override
+  Future<void> close() {
+    _playerStateSubscription?.cancel();
+    _durationSubscription?.cancel();
+    _positionSubscription?.cancel();
+    _sequenceStateSubscription?.cancel();
+    player.dispose();
+    return super.close();
+  }
+}

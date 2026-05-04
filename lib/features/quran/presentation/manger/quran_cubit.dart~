@@ -1,0 +1,69 @@
+import 'package:bloc/bloc.dart';
+import 'package:elda3ia_tour/features/quran/data/models/book_mark_model.dart';
+import 'package:elda3ia_tour/features/quran/data/repos/quran_repo.dart';
+import 'package:meta/meta.dart';
+
+import '../../../../core/services/local_storage_helper.dart';
+
+part 'quran_state.dart';
+
+class QuranCubit extends Cubit<QuranState> {
+  final QuranRepo repo;
+  QuranCubit({required this.repo}) : super(QuranInitial());
+
+  int? lastPage;
+  int? lastSurah;
+  int? lastAyah;
+
+  bool isMushafMode = true;
+  List<BookMarkModel> bookmarks = [];
+
+  Future<void> fetchBookmarks() async {
+    bookmarks = await repo.getAllBookmarks();
+    emit(QuranInitial());
+  }
+  Future<void> deleteBookmark(int id) async {
+    await repo.deleteBookmark(id);
+    bookmarks.removeWhere((e) => e.id == id);
+    emit(QuranInitial());
+  }
+  Future<void> addBookmark(BookMarkModel bookmark) async {
+    await repo.addBookmark(bookmark);
+    bookmarks.clear();
+    bookmarks=await repo.getAllBookmarks();
+    emit(QuranInitial());
+  }
+
+  Future<void> init() async {
+    lastPage = await LocalStorageHelper.getLastPage();
+    lastSurah = await LocalStorageHelper.getLastSurah();
+    lastAyah = await LocalStorageHelper.getLastAyah();
+
+    isMushafMode = await LocalStorageHelper.getIsMushafMode();
+
+    bookmarks = await repo.getAllBookmarks();
+
+    emit(QuranInitial());
+  }
+
+  Future<void> updateLastRead(int page, int surah, {int? verse}) async {
+    await LocalStorageHelper.saveLastPage(page);
+    await LocalStorageHelper.saveLastSurah(surah);
+
+    if (verse != null) {
+      await LocalStorageHelper.saveLastAyah(verse);
+      lastAyah = verse;
+    }
+
+    lastPage = page;
+    lastSurah = surah;
+
+    emit(QuranInitial());
+  }
+
+  Future<void> toggleDisplayMode(bool isMushaf) async {
+    isMushafMode = isMushaf;
+    await LocalStorageHelper.saveIsMushafMode(isMushaf);
+    emit(QuranInitial());
+  }
+}

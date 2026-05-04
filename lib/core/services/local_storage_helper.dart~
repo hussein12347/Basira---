@@ -1,0 +1,78 @@
+import 'package:shared_preferences/shared_preferences.dart';
+
+class LocalStorageHelper {
+  LocalStorageHelper._();
+
+  static const String _fontScaleKey = 'saved_font_scale';
+  static const String _lastPageKey = 'last_page';
+  static const String _lastSurahKey = 'last_surah';
+  static const String _lastAyahKey = 'last_ayah';
+  static const String _copyStyleKey = 'copyStyle';
+  static const String _lastReciterId = 'last_reciter_id';
+  static const double _defaultFontScale = 1.0;
+  static const String _isMushafModeKey = 'is_mushaf_mode';
+  /// استرجاع معامل تكبير الخط
+  static Future<double> getFontScale() async {
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.getDouble(_fontScaleKey) ?? _defaultFontScale;
+  }
+
+  /// حفظ معامل تكبير الخط
+  static Future<void> saveFontScale(double scale) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setDouble(_fontScaleKey, scale);
+  }
+
+  static Future<void>saveCopyStyle(bool isCollection)async{
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setBool(_copyStyleKey, isCollection);
+  }
+  static Future<bool> getCopyStyle()async{
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.getBool(_copyStyleKey)??true;
+  }
+
+  static Future<void> saveLastPage(int page)async{
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setInt(_lastPageKey, page);
+  }
+  static Future<int> getLastPage()async{
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.getInt(_lastPageKey)??1;
+  }
+  static Future<void> saveLastSurah(int surah)async{
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setInt(_lastSurahKey, surah);
+  }
+  static Future<int> getLastSurah()async{
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.getInt(_lastSurahKey)??1;
+  }
+
+  static Future<void> saveLastReciter(String reciterId) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString(_lastReciterId, reciterId);
+  }
+
+
+  static Future<String?> getLastReciterId() async {
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.getString(_lastReciterId);
+  }
+  static Future<void> saveIsMushafMode(bool isMushaf) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setBool(_isMushafModeKey, isMushaf);
+  }
+  static Future<void> saveLastAyah(int ayah)async{
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setInt(_lastAyahKey, ayah);
+  }
+  static Future<int?> getLastAyah()async{
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.getInt(_lastAyahKey);
+  }
+  static Future<bool> getIsMushafMode() async {
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.getBool(_isMushafModeKey) ?? true;
+  }
+}

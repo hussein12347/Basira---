@@ -1,0 +1,30 @@
+part of 'theme_and_local_cubit.dart';
+
+@immutable
+class ThemeAndLocalState {
+  final bool isDark;
+  final String locale;
+  final String theme;
+  final double fontScale; // الإضافة هنا
+
+  const ThemeAndLocalState({
+    this.isDark = true,
+    this.locale = 'en',
+    this.theme = 'lightBlue',
+    this.fontScale = 1.0, // القيمة الافتراضية
+  });
+
+  ThemeAndLocalState copyWith({
+    bool? isDark,
+    String? locale,
+    String? theme,
+    double? fontScale,
+  }) {
+    return ThemeAndLocalState(
+      isDark: isDark ?? this.isDark,
+      locale: locale ?? this.locale,
+      theme: theme ?? this.theme,
+      fontScale: fontScale ?? this.fontScale,
+    );
+  }
+}

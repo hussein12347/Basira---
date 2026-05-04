@@ -1,0 +1,25 @@
+part of 'download_cubit.dart';
+
+@immutable
+abstract class DownloadState {}
+
+class DownloadInitial extends DownloadState {}
+
+class DownloadLoading extends DownloadState {
+  final double progress; // 0.0 to 1.0
+  DownloadLoading(this.progress);
+}
+
+class DownloadSuccess extends DownloadState {
+  // يمكن أن يحتوي على المسار، أو رسالة مثل "deleted:path"
+  final String filePath;
+  DownloadSuccess(this.filePath);
+}
+
+// ✅ حالة جديدة لتمييز نجاح الحذف في الواجهة
+class DeleteSuccess extends DownloadState {}
+
+class DownloadError extends DownloadState {
+  final String message;
+  DownloadError(this.message);
+}

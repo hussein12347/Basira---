@@ -1,0 +1,242 @@
+import 'package:elda3ia_tour/core/utls/functions/is_arabic.dart';
+import 'package:flutter/material.dart';
+import 'package:qcf_quran_lite/qcf_quran_lite.dart';
+
+import '../../../../../generated/l10n.dart';
+
+class CustomRangeSelectionSheet extends StatefulWidget {
+  final int initialSurah;
+  final int initialVerse;
+
+  const CustomRangeSelectionSheet({
+    super.key,
+    required this.initialSurah,
+    required this.initialVerse,
+  });
+
+  @override
+  State<CustomRangeSelectionSheet> createState() => _CustomRangeSelectionSheetState();
+}
+
+class _CustomRangeSelectionSheetState extends State<CustomRangeSelectionSheet> {
+  late int startSurah;
+  late int startVerse;
+  late int endSurah;
+  late int endVerse;
+
+  @override
+  void initState() {
+    super.initState();
+    startSurah = widget.initialSurah;
+    startVerse = widget.initialVerse;
+    endSurah = widget.initialSurah;
+    endVerse = widget.initialVerse;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final s = S.of(context); // تهيئة الترجمة
+    final primaryColor = Theme.of(context).colorScheme.primary;
+
+    return Container(
+      padding: const EdgeInsets.all(20),
+      decoration: BoxDecoration(
+        color: Theme.of(context).scaffoldBackgroundColor,
+        borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
+      ),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Container(
+            width: 50,
+            height: 5,
+            decoration: BoxDecoration(
+              color: Colors.grey.withOpacity(0.4),
+              borderRadius: BorderRadius.circular(10),
+            ),
+          ),
+          const SizedBox(height: 20),
+          Text(
+            s.play_custom_range, // استخدام الترجمة هنا
+            style: TextStyle(
+              fontSize: 20,
+              fontWeight: FontWeight.bold,
+              color: primaryColor,
+              fontFamily: 'Cairo',
+            ),
+          ),
+          const SizedBox(height: 20),
+
+          // --- قسم البداية ---
+          Align(
+            alignment: AlignmentDirectional.centerStart,
+            child: Text(s.from_start, style: const TextStyle(fontWeight: FontWeight.bold)),
+          ),
+          Row(
+            children: [
+              Expanded(
+                flex: 2,
+                child: _buildSurahDropdown(
+                  context: context,
+                  value: startSurah,
+                  minSurah: 1,
+                  onChanged: (val) {
+                    setState(() {
+                      startSurah = val!;
+                      startVerse = 1;
+                      if (endSurah < startSurah) {
+                        endSurah = startSurah;
+                        endVerse = 1;
+                      }
+                    });
+                  },
+                ),
+              ),
+              const SizedBox(width: 10),
+              Expanded(
+                flex: 1,
+                child: _buildVerseDropdown(
+                  context: context,
+                  surah: startSurah,
+                  value: startVerse,
+                  minVerse: 1,
+                  onChanged: (val) {
+                    setState(() {
+                      startVerse = val!;
+                      if (startSurah == endSurah && endVerse < startVerse) {
+                        endVerse = startVerse;
+                      }
+                    });
+                  },
+                ),
+              ),
+            ],
+          ),
+
+          const SizedBox(height: 15),
+
+          // --- قسم النهاية ---
+          Align(
+            alignment: AlignmentDirectional.centerStart,
+            child: Text(s.to_end, style: const TextStyle(fontWeight: FontWeight.bold)),
+          ),
+          Row(
+            children: [
+              Expanded(
+                flex: 2,
+                child: _buildSurahDropdown(
+                  context: context,
+                  value: endSurah,
+                  minSurah: startSurah,
+                  onChanged: (val) {
+                    setState(() {
+                      endSurah = val!;
+                      if (endSurah == startSurah && endVerse < startVerse) {
+                        endVerse = startVerse;
+                      } else if (endVerse > getVerseCount(endSurah)) {
+                        endVerse = getVerseCount(endSurah);
+                      }
+                    });
+                  },
+                ),
+              ),
+              const SizedBox(width: 10),
+              Expanded(
+                flex: 1,
+                child: _buildVerseDropdown(
+                  context: context,
+                  surah: endSurah,
+                  value: endVerse,
+                  minVerse: startSurah == endSurah ? startVerse : 1,
+                  onChanged: (val) {
+                    setState(() {
+                      endVerse = val!;
+                    });
+                  },
+                ),
+              ),
+            ],
+          ),
+
+          const SizedBox(height: 30),
+
+          // --- زر التشغيل ---
+          SizedBox(
+            width: double.infinity,
+            height: 50,
+            child: ElevatedButton.icon(
+              style: ElevatedButton.styleFrom(
+                backgroundColor: primaryColor,
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+              ),
+              onPressed: () {
+                Navigator.pop(context, {
+                  'startSurah': startSurah,
+                  'startVerse': startVerse,
+                  'endSurah': endSurah,
+                  'endVerse': endVerse,
+                });
+              },
+              icon: const Icon(Icons.play_arrow, color: Colors.white),
+              label: Text(
+                s.start_recitation, // استخدام الترجمة هنا
+                style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 16),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildSurahDropdown({
+    required BuildContext context,
+    required int value,
+    required int minSurah,
+    required void Function(int?) onChanged
+  }) {
+    List<DropdownMenuItem<int>> items = [];
+    for (int i = minSurah; i <= 114; i++) {
+      items.add(DropdownMenuItem(
+        value: i,
+        child: Text(LanguageHelper.isArabic()?getSurahNameArabic(i):getSurahName(i), overflow: TextOverflow.ellipsis),
+      ));
+    }
+    return DropdownButtonFormField<int>(
+      decoration: const InputDecoration(border: OutlineInputBorder(), contentPadding: EdgeInsets.symmetric(horizontal: 10)),
+      value: value,
+      items: items,
+      dropdownColor: Theme.of(context).primaryColor,
+      onChanged: onChanged,
+    );
+  }
+
+  Widget _buildVerseDropdown({
+    required BuildContext context,
+    required int surah,
+    required int value,
+    required int minVerse,
+    required void Function(int?) onChanged
+  }) {
+    final s = S.of(context);
+    int maxVerses = getVerseCount(surah);
+    List<DropdownMenuItem<int>> items = [];
+    for (int i = minVerse; i <= maxVerses; i++) {
+      items.add(DropdownMenuItem(
+          value: i,
+          child: Text("${s.ayah} $i") // استخدام الترجمة المتاحة مسبقاً للآية
+      ));
+    }
+    int safeValue = (value >= minVerse && value <= maxVerses) ? value : minVerse;
+
+    return DropdownButtonFormField<int>(
+      decoration: const InputDecoration(border: OutlineInputBorder(), contentPadding: EdgeInsets.symmetric(horizontal: 10)),
+      value: safeValue,
+
+      items: items,
+      dropdownColor: Theme.of(context).primaryColor,
+
+      onChanged: onChanged,
+    );
+  }
+}

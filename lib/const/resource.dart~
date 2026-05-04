@@ -1,0 +1,20 @@
+/// Generate by [flutter_assets_generator](https://github.com/goodswifter/flutter_assets_generator) library.
+///
+/// PLEASE DO NOT EDIT MANUALLY.
+class R {
+  const R._();
+
+  /// ![preview](file://E:\projects\zpot\assets\images\svg\heart.svg)
+  static const String assetsImagesSvgHeartSvg = 'assets/images/svg/heart.svg';
+
+  /// ![preview](file://E:\projects\zpot\assets\images\svg\home.svg)
+  static const String assetsImagesSvgHomeSvg = 'assets/images/svg/home.svg';
+
+  /// ![preview](file://E:\projects\zpot\assets\images\svg\quran_number.svg)
+  static const String assetsImagesSvgQuranNumberSvg =
+      'assets/images/svg/quran_number.svg';
+
+  /// ![preview](file://E:\projects\zpot\assets\images\svg\setting.svg)
+  static const String assetsImagesSvgSettingSvg =
+      'assets/images/svg/setting.svg';
+}

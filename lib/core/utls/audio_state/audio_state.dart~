@@ -1,0 +1,65 @@
+// 💡 الملف 1: audio_state.dart
+// 💡 هذه هي الحالة "العامة" للمشغل.
+
+import 'package:equatable/equatable.dart';
+import 'package:just_audio/just_audio.dart';
+import 'package:just_audio_background/just_audio_background.dart';
+
+class AudioState extends Equatable {
+  final ProcessingState processingState;
+  final bool isPlaying;
+  final Duration duration;
+  final Duration position;
+  final MediaItem? currentMediaItem; // 💡 إضافة: لمعرفة ما الذي يتم تشغيله حالياً
+  final int? currentIndex; // لتتبع الفهرس في قائمة التشغيل
+  final double speed; // سرعة التشغيل
+
+  const AudioState({
+    required this.processingState,
+    required this.isPlaying,
+    this.duration = Duration.zero,
+    this.position = Duration.zero,
+    this.currentMediaItem,
+    this.currentIndex,
+    this.speed = 1.0,
+  });
+
+  factory AudioState.initial() {
+    return const AudioState(
+      processingState: ProcessingState.idle,
+      isPlaying: false,
+      speed: 1.0,
+    );
+  }
+
+  AudioState copyWith({
+    ProcessingState? processingState,
+    bool? isPlaying,
+    Duration? duration,
+    Duration? position,
+    MediaItem? currentMediaItem,
+    int? currentIndex,
+    double? speed,
+  }) {
+    return AudioState(
+      processingState: processingState ?? this.processingState,
+      isPlaying: isPlaying ?? this.isPlaying,
+      duration: duration ?? this.duration,
+      position: position ?? this.position,
+      currentMediaItem: currentMediaItem ?? this.currentMediaItem,
+      currentIndex: currentIndex ?? this.currentIndex,
+      speed: speed ?? this.speed,
+    );
+  }
+
+  @override
+  List<Object?> get props => [
+    processingState,
+    isPlaying,
+    duration,
+    position,
+    currentMediaItem,
+    currentIndex,
+    speed,
+  ];
+}

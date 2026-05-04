@@ -1,0 +1,73 @@
+import 'package:flutter/material.dart';
+
+class QuarterCirclePainter extends CustomPainter {
+  final int qInHizb; // 0, 1, 2, 3
+  final Color primaryColor;
+  final Color secondaryColor;
+
+  QuarterCirclePainter({
+    required this.qInHizb,
+    required this.primaryColor,
+    required this.secondaryColor,
+  });
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final center = Offset(size.width / 2, size.height / 2);
+    final radius = size.width / 2;
+
+    // 1. رسم الدائرة الخلفية (الرمادية الفاتحة)
+    final backgroundPaint = Paint()
+      ..color = secondaryColor.withOpacity(0.1)
+      ..style = PaintingStyle.fill;
+    canvas.drawCircle(center, radius, backgroundPaint);
+
+    // 2. رسم حدود الدائرة
+    final borderPaint = Paint()
+      ..color = secondaryColor.withOpacity(0.3)
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 1;
+    canvas.drawCircle(center, radius, borderPaint);
+
+    // 3. رسم الجزء الممتلئ (القوس) بناءً على الربع
+    if (qInHizb >= 0) {
+      final fillPaint = Paint()
+        ..color = primaryColor
+        ..style = PaintingStyle.fill;
+
+      double sweepAngle = 0;
+      // تحديد زاوية الامتلاء بناءً على الربع
+      // qInHizb: 0 (بداية الحزب - ممتلئة بالكامل)، 1 (الربع)، 2 (النصف)، 3 (ثلاثة أرباع)
+      switch (qInHizb) {
+        case 0:
+          sweepAngle = 2 * 0.0; // 360 درجة (ممتلئة)
+          break;
+        case 1:
+          sweepAngle = 0.5 * 3.141592653589793; // 90 درجة (ربع)
+          break;
+        case 2:
+          sweepAngle = 3.141592653589793; // 180 درجة (نصف)
+          break;
+        case 3:
+          sweepAngle = 1.5 * 3.141592653589793; // 270 درجة (ثلاثة أرباع)
+          break;
+      }
+
+      // رسم القوس الممتلئ من الأعلى (زاوية البداية -90 درجة)
+      canvas.drawArc(
+        Rect.fromCircle(center: center, radius: radius),
+        -3.141592653589793 / 2, // البداية من الأعلى
+        sweepAngle,
+        true, // استخدام المركز لتشكيل "قطاع فطيرة"
+        fillPaint,
+      );
+    }
+  }
+
+  @override
+  bool shouldRepaint(covariant QuarterCirclePainter oldDelegate) {
+    return oldDelegate.qInHizb != qInHizb ||
+        oldDelegate.primaryColor != primaryColor ||
+        oldDelegate.secondaryColor != secondaryColor;
+  }
+}

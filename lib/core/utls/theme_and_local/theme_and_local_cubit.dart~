@@ -1,0 +1,59 @@
+import 'package:bloc/bloc.dart';
+import 'package:meta/meta.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
+part 'theme_and_local_state.dart';
+
+
+class ThemeAndLocalCubit extends Cubit<ThemeAndLocalState> {
+  ThemeAndLocalCubit() : super(const ThemeAndLocalState());
+  double fontScale=1.0;
+  Future<void> loadPreferences() async {
+    final prefs = await SharedPreferences.getInstance();
+    final isDark = prefs.getBool('isDark') ?? true;
+    final locale = prefs.getString('locale') ?? 'en';
+    final theme = prefs.getString('theme') ?? 'lightBlue';
+     fontScale = prefs.getDouble('saved_font_scale') ?? 1.0; // تحميل الخط
+
+    emit(ThemeAndLocalState(
+        isDark: isDark,
+        locale: locale,
+        theme: theme,
+        fontScale: fontScale
+    ));
+  }
+
+
+
+  // إضافة ميزة تغيير حجم الخط
+  Future<void> changeFontScale(double scale) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setDouble('saved_font_scale', scale);
+    emit(state.copyWith(fontScale: scale));
+  }
+  /// تبديل الثيم (داكن/فاتح)
+  Future<void> toggleTheme() async {
+    final prefs = await SharedPreferences.getInstance();
+    final newTheme = !state.isDark;
+    await prefs.setBool('isDark', newTheme);
+
+    emit(state.copyWith(isDark: newTheme));
+  }
+
+  /// تغيير اللغة
+  Future<void> changeLanguage(String langCode) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString('locale', langCode);
+
+    emit(state.copyWith(locale: langCode));
+  }
+
+  /// تغيير الثيم الملون
+  Future<void> changeTheme(String theme) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString('theme', theme);
+
+    emit(state.copyWith(theme: theme));
+  }
+
+}

@@ -1,0 +1,12 @@
+const String kFavoriteRoute = '/favorite';
+const String kSettingsRoute = '/settings';
+const String kHomeRoute = '/home';
+const String kQuranPageViewRoute = '/quranPageView';
+const String kSearchRoute = '/search';
+const String kDownloadsRoute = '/downloads';
+const String kBookmarksTableName = 'bookmarks';
+const String kSurahNumberColumn = 'surah_number';
+const String kVerseNumberColumn = 'verse_number';
+const String kNoteColumn = 'note';
+const String kColorColumn = 'color';
+const String kCreatedAtColumn = 'created_at';

@@ -1,0 +1,58 @@
+// 💡 الملف 3: quran_player_state.dart
+// 💡 هذه الحالة "الخاصة" بالقرآن فقط.
+
+import 'package:elda3ia_tour/features/quran/data/models/audio_model.dart';
+import 'package:equatable/equatable.dart';
+
+
+class QuranPlayerState extends Equatable {
+  final bool isRepeating;
+  final AudioModel? currentReciter;
+  final int? currentSurahId;
+  final int? currentVerse;
+  final int? startVerse; // 💡 [الإضافة] لتتبع بداية الـ playlist
+  final int totalVerses;
+
+  const QuranPlayerState({
+    required this.isRepeating,
+    this.currentReciter,
+    this.currentSurahId,
+    this.currentVerse,
+    this.startVerse,
+    this.totalVerses = 0,
+  });
+
+  factory QuranPlayerState.initial() {
+    return const QuranPlayerState(
+      isRepeating: false,
+    );
+  }
+
+  QuranPlayerState copyWith({
+    bool? isRepeating,
+    AudioModel? currentReciter,
+    int? currentSurahId,
+    int? currentVerse,
+    int? startVerse,
+    int? totalVerses,
+  }) {
+    return QuranPlayerState(
+      isRepeating: isRepeating ?? this.isRepeating,
+      currentReciter: currentReciter ?? this.currentReciter,
+      currentSurahId: currentSurahId ?? this.currentSurahId,
+      currentVerse: currentVerse ?? this.currentVerse,
+      startVerse: startVerse ?? this.startVerse,
+      totalVerses: totalVerses ?? this.totalVerses,
+    );
+  }
+
+  @override
+  List<Object?> get props => [
+    isRepeating,
+    currentReciter,
+    currentSurahId,
+    currentVerse,
+    startVerse,
+    totalVerses,
+  ];
+}

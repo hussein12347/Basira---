@@ -1,0 +1,38 @@
+import 'package:flutter/material.dart';
+
+class TafsirSection extends StatelessWidget {
+  final String title;
+  final String content;
+  final bool isArabic;
+
+  const TafsirSection({super.key, required this.title, required this.content, required this.isArabic});
+
+  @override
+  Widget build(BuildContext context) {
+    final primaryColor = Theme.of(context).colorScheme.primary;
+    return Column(
+      children: [
+        Row(
+          children: [
+            Icon(isArabic ? Icons.library_books_outlined : Icons.translate, color: primaryColor, size: 22),
+            const SizedBox(width: 8),
+            Text(title, style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: primaryColor, fontFamily: 'Cairo')),
+          ],
+        ),
+        const Divider(height: 20),
+        Container(
+          width: double.infinity,
+          padding: const EdgeInsets.all(16),
+          decoration: BoxDecoration(color: primaryColor.withOpacity(0.05), borderRadius: BorderRadius.circular(12)),
+          child: Text(
+            content,
+            textAlign: TextAlign.justify,
+            textDirection: isArabic ? TextDirection.rtl : TextDirection.ltr,
+            style: const TextStyle(fontSize: 16, height: 1.6, fontFamily: 'Cairo'),
+          ),
+        ),
+        const SizedBox(height: 25),
+      ],
+    );
+  }
+}

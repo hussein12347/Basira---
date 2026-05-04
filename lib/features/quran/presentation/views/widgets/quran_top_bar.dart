@@ -1,0 +1,267 @@
+import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter_svg/flutter_svg.dart';
+import 'package:qcf_quran_lite/qcf_quran_lite.dart';
+import 'package:qcf_quran_lite/src/data/quarters.dart';
+
+import '../../../../../const/resource.dart';
+import '../../../../../core/utls/functions/is_arabic.dart';
+import '../../../../../core/utls/styles/app_styles.dart';
+import '../../../../../generated/l10n.dart';
+
+/// A widget that displays the top navigation and info bar for the Quran reader.
+///
+/// It shows the current Surah name (using specialized fonts for Arabic),
+/// the current Juz, and includes a page counter that allows quick navigation.
+class QuranTopBarWidget extends StatelessWidget {
+  /// The current page index (1-based for display).
+  final int currentPage;
+
+  /// The controller used to jump to specific pages when the user interacts with the bar.
+  final PageController pageController;
+
+  const QuranTopBarWidget({
+    super.key,
+    required this.currentPage,
+    required this.pageController,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
+    // Fetch data for the current page (Surah and verse ranges)
+    List pageData = getPageData(currentPage);
+    int currentJuz = getJuzNumber(pageData[0]['surah'], pageData[0]['end']);
+
+    // Determine the surah name format (Arabic uses specialized symbol fonts)
+    String surahName = LanguageHelper.isArabic()
+        ? "surah${(pageData[0]['surah']).toString().padLeft(3, '0')}"
+        : getSurahName(pageData[0]['surah']);
+
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 4.0),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          // Surah & Juz Information
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(
+                  surahName,
+                  style: LanguageHelper.isArabic()
+                      ? AppStyles.regular18(context).copyWith(fontFamily: 'surahName', fontSize: 22)
+                      : AppStyles.bold16(context),
+                ),
+                Text(
+                  "${S.of(context).juz} $currentJuz",
+                  style: AppStyles.regular12(context).copyWith(color: Theme.of(context).hintColor),
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(width: 10),
+
+          // Central Page and Hizb/Quarter Counter
+          QuranPageCounterWidget(
+            pageNumber: currentPage,
+            pageController: pageController,
+          ),
+
+          const Spacer(),
+
+          // Page flipping indicator (Left/Right SVG based on page parity)
+          SvgPicture.asset(
+            currentPage % 2 == 0 ? R.assetsImagesSvgPageLeftSvg : R.assetsImagesSvgPageRightSvg,
+            colorFilter: ColorFilter.mode(isDark ? Colors.white : Colors.black, BlendMode.srcIn),
+            height: 32,
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+/// A specialized widget that displays the current page number and Hizb quarter.
+///
+/// **Functionality:**
+/// - Tapping it opens a dialog to jump to any page (1-604).
+/// - Automatically detects if the current page starts a new Hizb or Quarter.
+/// - Handles localized number conversion (English/Arabic).
+class QuranPageCounterWidget extends StatelessWidget {
+  final int pageNumber;
+  final PageController pageController;
+
+  const QuranPageCounterWidget({
+    super.key,
+    required this.pageNumber,
+    required this.pageController,
+  });
+
+  /// Internal utility to convert standard integers to Arabic numerals.
+  String _convertToArabicNumber(int number) {
+    const arabicNumbers = ['٠', '١', '٢', '٣', '٤', '٥', '٦', '٧', '٨', '٩'];
+    return number.toString().split('').map((d) =>
+    RegExp(r'[0-9]').hasMatch(d) ? arabicNumbers[int.parse(d)] : d).join();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    // Check if this page contains the start of a Hizb quarter
+    int quarterIndex = quarters.indexWhere((q) => getPageNumber(q['surah']!, q['ayah']!) == pageNumber);
+    final bool showHizbText = quarterIndex != -1;
+
+    int hizb = 0;
+    int quarterInHizb = 0;
+
+    if (showHizbText) {
+      int quarter = quarterIndex + 1;
+      hizb = ((quarter - 1) ~/ 4) + 1;
+      quarterInHizb = ((quarter - 1) % 4) + 1;
+    }
+
+    /// Generates the localized text for the Hizb position (e.g., "Hizb 1", "1/2 Hizb 1").
+    String getHizbText() {
+      if (!showHizbText) return "";
+      String hizbNumber = LanguageHelper.isArabic() ? _convertToArabicNumber(hizb) : hizb.toString();
+
+      if (LanguageHelper.isArabic()) {
+        if (quarterInHizb == 1) return "الحزب $hizbNumber";
+        if (quarterInHizb == 2) return "ربع الحزب $hizbNumber";
+        if (quarterInHizb == 3) return "نصف الحزب $hizbNumber";
+        if (quarterInHizb == 4) return "ثلاثة أرباع الحزب $hizbNumber";
+      } else {
+        if (quarterInHizb == 1) return "Hizb $hizbNumber";
+        if (quarterInHizb == 2) return "1/4 Hizb $hizbNumber";
+        if (quarterInHizb == 3) return "1/2 Hizb $hizbNumber";
+        if (quarterInHizb == 4) return "3/4 Hizb $hizbNumber";
+      }
+      return "";
+    }
+
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final textColor = isDark ? Colors.white : Colors.black87;
+
+    return InkWell(
+      onTap: () => _showGoToPageDialog(context),
+      child: !showHizbText
+          ? Stack(
+        alignment: Alignment.center,
+        children: [
+          Image.asset(
+            isDark ? R.assetsImagesPngMainpagenumNoInvertPng : R.assetsImagesPngMainpagenumNoPng,
+            fit: BoxFit.fill,
+            width: 60,
+            height: 25,
+          ),
+          Text(
+            LanguageHelper.isArabic() ? _convertToArabicNumber(pageNumber) : pageNumber.toString(),
+            style: AppStyles.regular14(context).copyWith(color: textColor),
+          ),
+        ],
+      )
+          : SizedBox(
+        height: 30,
+        width: 150,
+        child: Stack(
+          alignment: Alignment.center,
+          children: [
+            Image.asset(
+                isDark ? R.assetsImagesPngMainpagenumInvertPng : R.assetsImagesPngMainpagenumPng,
+                fit: BoxFit.fill,
+                width: 200,
+                height: 40
+            ),
+            Directionality(
+              textDirection: TextDirection.rtl,
+              child: Row(
+                children: [
+                  const SizedBox(width: 8),
+                  Expanded(
+                      flex: 3,
+                      child: Center(
+                          child: FittedBox(
+                              fit: BoxFit.scaleDown,
+                              child: Text(
+                                LanguageHelper.isArabic() ? _convertToArabicNumber(pageNumber) : pageNumber.toString(),
+                                style: AppStyles.regular14(context).copyWith(color: textColor),
+                              )
+                          )
+                      )
+                  ),
+                  Expanded(
+                    flex: 7,
+                    child: Center(
+                      child: FittedBox(
+                          fit: BoxFit.scaleDown,
+                          child: Directionality(
+                              textDirection: LanguageHelper.isArabic() ? TextDirection.rtl : TextDirection.ltr,
+                              child: Text(getHizbText(), style: AppStyles.regular12(context).copyWith(color: textColor))
+                          )
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 2),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  /// Displays an [AlertDialog] prompting the user to enter a page number.
+  ///
+  /// Validates the input to ensure it falls within the Quranic page range (1-604).
+  void _showGoToPageDialog(BuildContext context) {
+    final TextEditingController controller = TextEditingController();
+    final formKey = GlobalKey<FormState>();
+
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        backgroundColor: Theme.of(context).cardColor,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
+        title: Text(S.of(context).goToPage, textAlign: TextAlign.center, style: AppStyles.medium20(context)),
+        content: Form(
+          key: formKey,
+          child: TextFormField(
+            controller: controller,
+            keyboardType: TextInputType.number,
+            autofocus: true,
+            textAlign: TextAlign.center,
+            decoration: InputDecoration(
+              hintText: S.of(context).enterPageNumber,
+              border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
+            ),
+            inputFormatters: [FilteringTextInputFormatter.digitsOnly, LengthLimitingTextInputFormatter(3)],
+            validator: (value) {
+              if (value == null || value.isEmpty) return S.of(context).invalidPage;
+              final page = int.tryParse(value);
+              if (page == null || page < 1 || page > 604) return S.of(context).invalidPage;
+              return null;
+            },
+          ),
+        ),
+        actions: [
+          TextButton(onPressed: () => Navigator.pop(context), child: Text(S.of(context).cancel)),
+          ElevatedButton(
+            onPressed: () {
+              if (formKey.currentState!.validate()) {
+                int targetPage = int.parse(controller.text);
+                // Jump to the specific page in the controller
+                pageController.jumpToPage(targetPage - 1);
+                Navigator.pop(context);
+              }
+            },
+            child: Text(S.of(context).confirm),
+          ),
+        ],
+      ),
+    );
+  }
+}
